@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  fetching:
+    build: ./fetching
+    container_name: fetching
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - database
+    depends_on:
+      database:
+        condition: service_started  
+    environment:
+      - TOKEN=${TOKEN}
+      - DATABASE_DRIVER=${DATABASE_DRIVER}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_DATABASE=${DATABASE_DATABASE}
+
+  frontend:
+    build: ./frontend
+    restart: always
+    networks:
+      - frontend
+    ports:
+      - 5173:5173
+
+  backend:
+    build: ./backend
+    depends_on:
+      database:
+        condition: service_started
+      frontend:
+        condition: service_started
+    container_name: "api"
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    links:
+      - database
+      - frontend  
+    env_file:
+      - .env
+    environment:
+      - DEBUG=${DEBUG}
+      - APP_NAME=${APP_NAME}
+      - DESCRIPTION=${DESCRIPTION}
+      - VERSION=${VERSION}
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_DRIVER=${DATABASE_DRIVER}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_DATABASE=${DATABASE_DATABASE}
+      - TOKEN_ALGORITHM=${TOKEN_ALGORITHM}
+    volumes:
+      - ./backend:/src/app
+
+  database:
+    image: "postgres:14.3-alpine"
+    container_name: "postgres"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_DATABASE}
+    expose:
+      - 5432
+    networks:
+      - database  
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d/
+
+networks:
+  database:
+    driver: bridge
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
