@@ -1,0 +1,9 @@
+[submodule "fetching"]
+	path = fetching
+	url = git@github.com:Yesid-Q/fetching.git
+[submodule "backend"]
+	path = backend
+	url = git@github.com:Yesid-Q/backend.git
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:Yesid-Q/frontend.git

@@ -20,14 +20,6 @@ services:
       - DATABASE_PORT=${DATABASE_PORT}
       - DATABASE_DATABASE=${DATABASE_DATABASE}
 
-  frontend:
-    build: ./frontend
-    restart: always
-    networks:
-      - frontend
-    ports:
-      - 5173:5173
-
   backend:
     build: ./backend
     depends_on:
