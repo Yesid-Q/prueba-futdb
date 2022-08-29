@@ -25,8 +25,6 @@ services:
     depends_on:
       database:
         condition: service_started
-      frontend:
-        condition: service_started
     container_name: "api"
     restart: always
     ports:
