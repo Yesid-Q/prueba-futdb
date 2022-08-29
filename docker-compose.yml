@@ -35,7 +35,6 @@ services:
       - backend
     links:
       - database
-      - frontend  
     env_file:
       - .env
     environment:
